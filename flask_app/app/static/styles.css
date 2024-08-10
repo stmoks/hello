@@ -11,10 +11,14 @@ body {
 
 a,
 a:visited {
-  color: #8cff00;
+  color: #f700ff;
 }
 
 a:hover {
+  color: #0056b3;
+}
+
+.navbar a:hover {
   color: #0056b3;
 }
 
@@ -28,7 +32,65 @@ nav ul li {
   margin: 0 5px;
 }
 
-main {
-  width: 80%;
-  margin: 0 auto;
+/* Resetting default margin and padding */
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 20px;
+  color: #618d58;
+  margin-bottom: 15px;
+}
+
+p {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* Styling navigation menu */
+.navbar {
+  background-color: #2c5072;
+  color: #fff;
+  padding: 15px 0;
+}
+
+.navbar ul {
+  list-style-type: none;
+}
+
+.navbar li {
+  display: inline;
+  margin-right: 20px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #fff;
+}
+
+/* Styling main content area */
+.main-content {
+  margin-top: 20px;
+}
+
+/* Styling footer */
+.footer {
+  background-color: #4682b4;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
 }

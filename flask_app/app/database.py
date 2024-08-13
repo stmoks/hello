@@ -4,6 +4,7 @@ from flask import current_app, g
 
 def init_app(app):
     app.cli.add_command(init_db_command)
+    app.teardown_appcontext(close_db)
 
 @click.command('init-db')
 def init_db_command():
@@ -23,3 +24,10 @@ def get_db():
         g.db.row_factory = sqlite3.Row
 
     return g.db
+
+#close connection
+def close_db(e=None):
+    db = g.pop("db", None)
+
+    if db is not None:
+        db.close()

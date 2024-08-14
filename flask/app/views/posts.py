@@ -17,7 +17,7 @@ def search():
                 (author, message),
             )
             db.commit()
-            return redirect(url_for("posts.posts"))
+            # return redirect(url_for("posts.posts"))
     return render_template('posts/explore.html')
 
 @bp.route('/posts',methods=['GET'])

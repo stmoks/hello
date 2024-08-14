@@ -1,6 +1,6 @@
 FROM python:3.12.4
 
-WORKDIR /usr/src/flask_app
+WORKDIR /usr/src/flask
 
 COPY . .
 

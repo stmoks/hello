@@ -5,7 +5,7 @@ services:
     container_name: flask-app
     restart: always
     build:
-      context: ./flask_app
+      context: ./flask
       dockerfile: Dockerfile
     environment:
       - TZ=Africa/Johannesburg

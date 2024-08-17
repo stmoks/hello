@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from flask import Blueprint,redirect,render_template,request,url_for
 
 bp = Blueprint('posts',__name__)
@@ -13,17 +14,17 @@ def search():
         if message:
             db = get_db()
             db.execute(
-                "INSERT INTO post (author, message) VALUES (?, ?)",
-                (author, message),
+                text("INSERT INTO users.post (author, message) VALUES (:a, :m)"),
+                {'a': author, 'm':message}
             )
             db.commit()
-            # return redirect(url_for("posts.posts"))
+            return redirect(url_for("posts.posts"))
     return render_template('posts/explore.html')
 
 @bp.route('/posts',methods=['GET'])
 def posts():
     db = get_db()
     posts = db.execute(
-        "SELECT author, message, created FROM post ORDER BY created DESC"
+        text('SELECT author, message, created FROM users.post ORDER BY created DESC')
     ).fetchall()
     return render_template('posts/posts.html',posts=posts)

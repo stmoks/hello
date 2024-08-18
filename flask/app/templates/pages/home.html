@@ -2,7 +2,10 @@
 <h2>{% block title %}Home{% endblock title %}</h2>
 {% endblock header %} {% block content %}
 <p>
-  Learn more about this project by visiting clicking
-  <a href="{{ url_for('pages.about') }}">here</a>.
+  Let's 
+  <a href="{{ url_for('posts.search') }}">explore</a>!
+</p>
+<p>
+<iframe src= "{{ iframe }}" frameborder="0">Map</iframe>
 </p>
 {% endblock content %}

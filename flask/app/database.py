@@ -1,9 +1,9 @@
 import sqlite3
 import click
 from flask import current_app, g
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text
+from sqlalchemy import create_engine,text
 import psycopg2
+import polars as pl
 
 
 def init_app(app):
@@ -20,12 +20,28 @@ def init_db_command():
 
     click.echo("You successfully initialized the database!")
 
+#todo test g session in prime
 def get_db():
     if "db" not in g:
         engine = create_engine(f'postgresql+psycopg2://postgres:superuser_password@localhost:5432/dumela')
         g.db = engine.connect()
 
     return g.db
+
+#TODO apply the g session to polars
+def get_db_uri():
+    db_conn_dict = {
+    'db_name': 'dumela',
+    'schema_name': 'users',
+    'username': 'postgres',
+    'password': 'superuser_password',
+    'host': 'localhost',
+    'port': 5432
+}
+
+    db_conn_uri = f"postgresql://{db_conn_dict['username']}:{db_conn_dict['password']}@{db_conn_dict['host']}:{db_conn_dict['port']}/{db_conn_dict['db_name']}"
+
+    return db_conn_uri
 
 #close connection
 def close_db(e=None):

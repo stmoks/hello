@@ -1,9 +1,0 @@
-{% extends 'base.html' %} {% block header %}
-<h2>{% block title %}Home{% endblock title %}</h2>
-{% endblock header %} {% block content %}
-<div><p>
-<a href="{{ url_for('posts.map')}}">Full Screen</a>
-</p>
-<iframe class="map" src="map" width="1000" height="600"></iframe>
-</div>
-{% endblock content %}

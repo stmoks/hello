@@ -26,5 +26,5 @@ def home():
     
     m.save('app/templates/pages/map.html')
 
-    return render_template('pages/home.html')
+    return render_template('pages/index.html')
 

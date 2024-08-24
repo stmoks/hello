@@ -1,5 +1,5 @@
 import folium
-from flask import Blueprint,render_template,render_template_string
+from flask import Blueprint,render_template,render_template_string,request
 from sqlalchemy import text
 import polars as pl
 
@@ -9,9 +9,10 @@ from app.database import get_db,get_db_uri
 
 #TODO show the flags on the popup 
 
-@bp.route('/')
+@bp.route('/',methods=['GET','POST'])
 def home():
-    db = get_db_uri()
+    db_uri = get_db_uri()
+    db_string = get_db()
 
     # map base
     m = folium.Map(location=[39.949610, -75.150282], zoom_start=16)
@@ -19,12 +20,23 @@ def home():
         [39.949610, -75.150282], popup='Liberty Bell', tooltip='Liberty Bell'
     ).add_to(m)
 
-    country_info = pl.read_database_uri('SELECT * FROM reference.country_info',db)
+    country_info = pl.read_database_uri('SELECT * FROM reference.country_info',db_uri)
     country_info.with_columns(pl.col('coords_city_sdc').map_elements(lambda x: folium.CircleMarker(location = x.split(',')[0:2], radius=2,
     fill=True,
     popup=country_info.filter(pl.col('city')== x.split(',')[2]).select(pl.col(['country','city']))._repr_html_()).add_to(m)))
     
     m.save('app/templates/pages/map.html')
 
-    return render_template('pages/index.html')
+
+    # capitals dropdown list
+    capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
+
+    # search for the country coordinates
+    if request.method == 'POST':
+        city = request.form['capitals']
+        country = pl.read_database(f"SELECT country,longitude_sdc,latitude_sdc FROM reference.country_info WHERE city = '{city}'",db_string).item(0,0)       
+        return render_template('pages/index.html',capitals=capitals,country=country)
+
+
+    return render_template('pages/index.html',capitals=capitals)
 

@@ -11,9 +11,9 @@ from app.database import get_db
 
 @bp.route('/explore',methods=['GET','POST'])
 def search():
-    if request.method == "POST":
-        author = request.form["author"] or "Anonymous"
-        message = request.form["message"]
+    if request.method == 'POST':
+        author = request.form['author'] or 'Anonymous'
+        message = request.form['message']
 
         if message:
             db = get_db()

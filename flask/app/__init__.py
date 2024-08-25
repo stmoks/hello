@@ -8,8 +8,8 @@ def create_app(test_config=None):
     #create and configure the app
     application = Flask(__name__)
     application.config.from_prefixed_env()
-    print(f'Database: {application.config.get('DATABASE')}')
-    print(f'Environment: {os.getenv('ENVIRONMENT')}')
+    print(f"Database: {application.config.get('DATABASE')}")
+    print(f"Environment: {os.getenv('ENVIRONMENT')}")
 
     # register database
     import app.database as database

@@ -106,7 +106,7 @@ form {
   margin-bottom: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  box-shadow: 0px 0px 10px #247e5d;
+  box-shadow: 0px 0px 10px #c1d9e3c7;
   vertical-align: top;
 
 }
@@ -136,14 +136,15 @@ form {
 }
 
 .form-dropdown {
+  margin: auto;
   width: 80%;
+  border: 0.5px solid green;
+  padding: 10px;
 
 }
 
 div form {
   text-align: center;
-  padding-left: 30px;
-  background-color: yellow;
 }
 
 .submit-btn {

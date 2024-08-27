@@ -2,11 +2,11 @@
 <h1>{% block title %}Home{% endblock title %}</h1>
 {% endblock header %} {% block content %}
 <div id = 'dropdown'>
-    <form action='' method='POST' class='form-dropdown'>
+    <form action='/submit-capital' method='POST' class='form-dropdown' id='capitalForm'>
     <div>
         <label for='capital'>Choose a capital</label>
         <br>
-        <select type='button' name='capitals' id='capital'>
+        <select name='capitals' id='capital'>
             <option value="">--Choose a capital--</option>
             {% for capital in capitals %}
             <option value="{{ capital }}">{{ capital }}</option>
@@ -15,15 +15,27 @@
     </div>
     </form>
 
-    <h2>{{ country }}</h2>
+    <h2 id='country_response'></h2>
 
     <script>
         document.getElementById('capital').addEventListener('change', function() {
             if (this.value) {
-                this.form.submit();
+                let formData = new FormData(document.getElementById('capitalForm'));
+                
+                fetch(this.form.action, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text()).then(data => {
+                
+                console.log('Form submitted successfully:', data);
+                document.getElementById('country_response').innerHTML = data;
+                })
+                
             }
         });
     </script>
+    
 
     <h1>World Map</h1>
     <iframe class='map' src='map' width='1000' height='600'></iframe>

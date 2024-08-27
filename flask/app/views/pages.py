@@ -11,7 +11,6 @@ bp = Blueprint('pages', __name__)
 @bp.route('/', methods=['GET', 'POST'])
 def home():
     db_uri = get_db_uri()
-    db_string = get_db()
 
     # map base
     m = folium.Map(location=[39.949610, -75.150282], zoom_start=16)
@@ -19,23 +18,37 @@ def home():
         [39.949610, -75.150282], popup='Liberty Bell', tooltip='Liberty Bell'
     ).add_to(m)
 
-    country_info = pl.read_database_uri(
-        'SELECT * FROM reference.country_info', db_uri)
-    country_info.with_columns(pl.col('coords_city_sdc').map_elements(lambda x: folium.CircleMarker(location=x.split(',')[
-                              0:2], radius=2, fill=True, popup=country_info.filter(pl.col('city') == x.split(',')[2]).select(pl.col(['country', 'city']))._repr_html_()).add_to(m)))
+    country_info = pl.read_database_uri('SELECT * FROM reference.country_info', db_uri)
+
+    country_info.with_columns(pl.col('coords_city_sdc').map_elements(lambda x: folium.CircleMarker(location=x.split(',')[0:2], radius=2, fill=True, popup=country_info.filter(pl.col('city') == x.split(',')[2]).select(pl.col(['country', 'city']))._repr_html_()).add_to(m)))
 
     m.save('app/templates/pages/map.html')
 
-    # capitals dropdown list
+     # capitals dropdown list
     capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
 
-    country_info = pl.read_database_uri(f"SELECT city,country,longitude_sdc,latitude_sdc FROM reference.country_info", db_uri)
+    return render_template('pages/index.html',capitals=capitals)
+
+
+
+@bp.route('/submit-capital', methods=['POST'])
+def submit_capital():
+    db_uri = get_db_uri()
+
+    selected_capital = request.form['capital']
+
+    country_info = pl.read_database_uri('SELECT * FROM reference.country_info', db_uri)
+
+    country_info = pl.read_database_uri(f"SELECT city,country,longitude_sdc,latitude_sdc FROM reference. country_info", db_uri)
+
+    capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
+
     # search for the country coordinates
     if request.method == 'POST':
         city = request.form['capitals']
         country = country_info.filter(pl.col('city') == city ).select(['country','longitude_sdc','latitude_sdc']).item(0,0)
-        
-        
-        return render_template('pages/index.html', capitals=capitals, country=country)
+    else:
+        country = ''
 
-    return render_template('pages/index.html', capitals=capitals)
+    return render_template('pages/index.html', country=country)
+    

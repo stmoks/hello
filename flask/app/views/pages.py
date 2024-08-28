@@ -35,8 +35,6 @@ def home():
 def submit_capital():
     db_uri = get_db_uri()
 
-    selected_capital = request.form['capital']
-
     country_info = pl.read_database_uri('SELECT * FROM reference.country_info', db_uri)
 
     country_info = pl.read_database_uri(f"SELECT city,country,longitude_sdc,latitude_sdc FROM reference. country_info", db_uri)
@@ -45,7 +43,7 @@ def submit_capital():
 
     # search for the country coordinates
     if request.method == 'POST':
-        city = request.form['capitals']
+        city = request.form['capital']
         country = country_info.filter(pl.col('city') == city ).select(['country','longitude_sdc','latitude_sdc']).item(0,0)
     else:
         country = ''

@@ -3,16 +3,12 @@
 {% endblock header %} {% block content %}
 <div id = 'dropdown'>
     <form action='/submit-capital' method='POST' class='form-dropdown' id='capitalForm'>
-    <div>
-        <label for='capital'>Choose a capital</label>
-        <br>
-        <select name='capitals' id='capital'>
-            <option value="">--Choose a capital--</option>
+        <select name='capital_options' id='capital'>
+            <option value="">Choose a capital:</option>
             {% for capital in capitals %}
             <option value="{{ capital }}">{{ capital }}</option>
             {% endfor %}
         </select>
-    </div>
     </form>
 
     <h2 id='country_response'></h2>
@@ -24,7 +20,7 @@
                 
                 fetch(this.form.action, {
                     method: 'POST',
-                    body: formData.entries,
+                    body: formData,
                 })
                 .then(response => response.text()).then(data => {
                 
@@ -34,7 +30,7 @@
                 
             }
         });
-    </script>
+    </script> 
     
 
     <h1>World Map</h1>

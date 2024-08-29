@@ -42,11 +42,15 @@ def submit_capital():
     capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
 
     # search for the country coordinates
+   
     if request.method == 'POST':
-        city = request.form['capital']
-        country = country_info.filter(pl.col('city') == city ).select(['country','longitude_sdc','latitude_sdc']).item(0,0)
+        city = request.form.get('capital_options')
+        try:
+            country = country_info.filter(pl.col('city') == city ).select(['country','longitude_sdc','latitude_sdc']).item(0,0)
+        except:
+            country = ''
     else:
         country = ''
 
-    return render_template('pages/index.html', country=country)
+    return country
     

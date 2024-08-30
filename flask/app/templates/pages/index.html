@@ -32,8 +32,13 @@
         });
     </script> 
     
-
+    
+    
     <h1>World Map</h1>
-    <iframe class='map' src='map' width='1000' height='600'></iframe>
+    <!-- <iframe class='map' src='map' width='1000' height='600'></iframe> -->
+    <p id='map_id'></p>
+    <script>
+        document.getElementById('map_id').innerHTML += `{{ map}}`;
+    </script>
 </div>
 {% endblock content %}

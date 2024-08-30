@@ -13,21 +13,22 @@ def home():
     db_uri = get_db_uri()
 
     # map base
-    m = folium.Map(location=[39.949610, -75.150282], zoom_start=16)
+    map = folium.Map(location=[39.949610, -75.150282], zoom_start=16)
     folium.Marker(
         [39.949610, -75.150282], popup='Liberty Bell', tooltip='Liberty Bell'
-    ).add_to(m)
+    ).add_to(map)
 
     country_info = pl.read_database_uri('SELECT * FROM reference.country_info', db_uri)
 
-    country_info.with_columns(pl.col('coords_city_sdc').map_elements(lambda x: folium.CircleMarker(location=x.split(',')[0:2], radius=2, fill=True, popup=country_info.filter(pl.col('city') == x.split(',')[2]).select(pl.col(['country', 'city']))._repr_html_()).add_to(m)))
+    country_info.with_columns(pl.col('coords_city_sdc').map_elements(lambda x: folium.CircleMarker(location=x.split(',')[0:2], radius=2, fill=True, popup=country_info.filter(pl.col('city') == x.split(',')[2]).select(pl.col(['country', 'city']))._repr_html_()).add_to(map)))
 
-    m.save('app/templates/pages/map.html')
+    # map.save('app/templates/pages/map.html')
+    map = map.get_root().render()
 
      # capitals dropdown list
     capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
 
-    return render_template('pages/index.html',capitals=capitals)
+    return render_template('pages/index.html',capitals=capitals,map=map)
 
 
 

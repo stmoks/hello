@@ -34,9 +34,5 @@ def posts():
     return render_template('posts/posts.html',posts=posts)
 
 
-@bp.route('/map',methods=['GET'])
-def map():
-     # m.get_root().render()
-    return render_template('pages/map.html')
     
     

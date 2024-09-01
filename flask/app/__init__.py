@@ -23,6 +23,10 @@ def create_app(test_config=None):
     from app.views import posts
     application.register_blueprint(posts.bp)
 
+    # register maps blueprint
+    from app.views import maps
+    application.register_blueprint(maps.bp)
+
 
     return application
 

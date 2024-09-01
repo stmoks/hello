@@ -12,6 +12,9 @@
     </form>
 
     <h2 id='country_response'></h2>
+    <div id='map_button'>
+        <button class="colorful-button" onclick="window.location.href='/explore_map'">Explore Map</button>
+    </div>
 
     <script>
         document.getElementById('capital').addEventListener('change', function() {
@@ -30,15 +33,7 @@
                 
             }
         });
-    </script> 
-    
-    
-    
-    <h1>World Map</h1>
-    <!-- <iframe class='map' src='map' width='1000' height='600'></iframe> -->
-    <p id='map_id'></p>
-    <script>
-        document.getElementById('map_id').innerHTML += `{{ map}}`;
-    </script>
+    </script>   
+ 
 </div>
 {% endblock content %}

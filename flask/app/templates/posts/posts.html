@@ -1,14 +1,27 @@
 {% extends 'base.html' %}
 
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+{% endblock styles %}
+
 {% block header %}
   <h2>{% block title %}Posts{% endblock title %}</h2>
 {% endblock header %}
 
 {% block content %}
-  {% for post in posts %}
-    <article>
-      <p class="message">{{ post["message"] }}<p>
-      <aside>Posted by {{ post["author"] }} on {{ post["created"].strftime("%b %d, %Y at %I:%M%p") }}</aside>
-    </article>
-  {% endfor %}
+  <div id="posts-container">
+    {% for post in posts %}
+      <article class="draggable" draggable="true">
+        <p class="message">{{ post["message"] }}</p>
+        <aside>Posted by {{ post["author"] }} on {{ post["created"].strftime("%b %d, %Y at %I:%M%p") }}</aside>
+      </article>
+    {% endfor %}
+  </div>
 {% endblock content %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/posts.js') }}"></script>
+{% endblock scripts%}
+
+ 

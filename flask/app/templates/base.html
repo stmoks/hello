@@ -2,17 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
     <title>Dumela</title>
   </head>
   <body>
     {% include("_navigation.html") %}
     <section>
+      {% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+{% endblock styles %}
       <header>{% block header %}{% endblock header %}</header>
       <main>
         {% block content %}
         <p>No messages.</p>
         {% endblock content %}
+        {% block scripts %}
+        {% endblock scripts %}
       </main>
     </section>
   </body>

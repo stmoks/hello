@@ -1,39 +1,182 @@
-{% extends 'base.html' %} {% block header %}
+{% extends 'base.html' %}
+
+{% block header %}
 <h1>{% block title %}Home{% endblock title %}</h1>
-{% endblock header %} {% block content %}
-<div id = 'dropdown'>
-    <form action='/submit-capital' method='POST' class='form-dropdown' id='capitalForm'>
-        <select name='capital_options' id='capital'>
-            <option value="">Choose a capital:</option>
-            {% for capital in capitals %}
-            <option value="{{ capital }}">{{ capital }}</option>
-            {% endfor %}
-        </select>
+{% endblock header %}
+
+{% block content %}
+<div id="search-container">
+    <form action='/submit-capital' method='POST' id='capitalForm'>
+        <input type="text" id="capital-search" name="capital" placeholder="Search for a capital...">
+        <ul id="capital-suggestions"></ul>
     </form>
 
-    <h2 id='country_response'></h2>
-    <div id='map_button'>
-        <button class="colorful-button" onclick="window.location.href='/explore_map'">Explore Map</button>
+    <div id='country_info' style="display: none;">
+        <h2>Country Information</h2>
+        <table id='country_table'>
+            <tbody></tbody>
+        </table>
     </div>
 
-    <script>
-        document.getElementById('capital').addEventListener('change', function() {
-            if (this.value) {
-                let formData = new FormData(document.getElementById('capitalForm'));
-                
-                fetch(this.form.action, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.text()).then(data => {
-                
-                console.log('Form submitted successfully:', data);
-                document.getElementById('country_response').innerHTML = data;
-                })
-                
-            }
-        });
-    </script>   
- 
+    <div id="map" style="width: 100%; height: 400px; display: none;"></div>
+
+    <div id='map_button'>
+        <button class="colorful-button" onclick="window.location.href='/explore_map'">Explore Full Map</button>
+    </div>
 </div>
+
+<style>
+    #search-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    #capital-search {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    #capital-suggestions {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #ddd;
+        border-top: none;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    #capital-suggestions li {
+        padding: 10px;
+        cursor: pointer;
+    }
+    #capital-suggestions li:hover, #capital-suggestions li.selected {
+        background-color: #f0f0f0;
+    }
+    #country_table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    #country_table td, #country_table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #country_table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    #map {
+        margin-top: 20px;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+
+<script>
+    const capitalSearch = document.getElementById('capital-search');
+    const capitalSuggestions = document.getElementById('capital-suggestions');
+    const countryInfo = document.getElementById('country_info');
+    const countryTable = document.getElementById('country_table').getElementsByTagName('tbody')[0];
+    const mapDiv = document.getElementById('map');
+    let map;
+    let selectedIndex = -1;
+
+    capitalSearch.addEventListener('input', function() {
+        const searchValue = this.value.toLowerCase();
+        const filteredCapitals = capitals.filter(capital => 
+            capital.toLowerCase().startsWith(searchValue)
+        );
+
+        capitalSuggestions.innerHTML = '';
+        filteredCapitals.forEach((capital, index) => {
+            const li = document.createElement('li');
+            li.textContent = capital;
+            li.addEventListener('click', function() {
+                capitalSearch.value = capital;
+                capitalSuggestions.innerHTML = '';
+                submitCapital(capital);
+            });
+            capitalSuggestions.appendChild(li);
+        });
+        selectedIndex = -1;
+    });
+
+    capitalSearch.addEventListener('keydown', function(e) {
+        const suggestions = capitalSuggestions.getElementsByTagName('li');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
+            updateSelectedSuggestion();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            updateSelectedSuggestion();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (selectedIndex >= 0) {
+                capitalSearch.value = suggestions[selectedIndex].textContent;
+                capitalSuggestions.innerHTML = '';
+                submitCapital(capitalSearch.value);
+            } else {
+                submitCapital(this.value);
+            }
+        }
+    });
+
+    function updateSelectedSuggestion() {
+        const suggestions = capitalSuggestions.getElementsByTagName('li');
+        for (let i = 0; i < suggestions.length; i++) {
+            suggestions[i].classList.toggle('selected', i === selectedIndex);
+        }
+        if (selectedIndex >= 0) {
+            suggestions[selectedIndex].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function submitCapital(capital) {
+        let formData = new FormData();
+        formData.append('capital', capital);
+        
+        fetch('/submit-capital', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Form submitted successfully:', data);
+            displayCountryInfo(data);
+            updateMap(data.latitude_sdc, data.longitude_sdc);
+        });
+    }
+
+    function displayCountryInfo(data) {
+        countryTable.innerHTML = '';
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'latitude_sdc' && key !== 'longitude_sdc') {
+                const row = countryTable.insertRow();
+                const keyCell = row.insertCell(0);
+                const valueCell = row.insertCell(1);
+                keyCell.textContent = key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.replace(/_/g, ' ').slice(1);
+                valueCell.textContent = value;
+            }
+        }
+        countryInfo.style.display = 'block';
+    }
+
+    function updateMap(lat, lon) {
+        mapDiv.style.display = 'block';
+        if (!map) {
+            map = L.map('map').setView([lat, lon], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        } else {
+            map.setView([lat, lon], 13);
+        }
+        L.marker([lat, lon]).addTo(map);
+    }
+
+    const capitals = JSON.parse('{{ capitals | tojson | safe }}');
+</script>   
 {% endblock content %}

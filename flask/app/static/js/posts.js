@@ -1,4 +1,3 @@
-console.log('Posts script loaded');
 document.addEventListener('DOMContentLoaded', () => {
     const postsContainer = document.getElementById('posts-container');
     let draggingElement = null;

@@ -1,45 +1,34 @@
-from app.database import get_db, get_db_uri
-import folium
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 import polars as pl
+from app.database import get_db_uri
 
 bp = Blueprint('pages', __name__)
 
-
-# TODO show the flags on the popup
-
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET'])
 def home():
     db_uri = get_db_uri()
     country_info = pl.read_database_uri('SELECT * FROM reference.country_info', db_uri)
-    # capitals dropdown list
     capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
-    return render_template('pages/index.html',capitals=capitals)
-
-
+    return render_template('pages/index.html', capitals=capitals)
 
 @bp.route('/submit-capital', methods=['POST'])
 def submit_capital():
     db_uri = get_db_uri()
-
     country_info = pl.read_database_uri('SELECT * FROM reference.country_info', db_uri)
 
-    country_info = pl.read_database_uri(f"SELECT city,country,longitude_sdc,latitude_sdc FROM reference. country_info", db_uri)
-
-    capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
-
-    # search for the country coordinates
-   
     if request.method == 'POST':
-        city = request.form.get('capital_options')
+        city = request.form.get('capital')
         try:
-            country = country_info.filter(pl.col('city') == city ).select(['country','longitude_sdc','latitude_sdc']).item(0,0)
-        except:
-            country = ''
-    else:
-        country = ''
+            country_data = country_info.filter(pl.col('city') == city).select(['country', 'city', 'longitude_sdc', 'latitude_sdc']).to_dict(as_series=False)
+            if country_data:
+                # Convert to regular Python types for JSON serialization
+                result = {k: v[0] for k, v in country_data.items()}
+                print("Sending data:", result)  # Debug print
+                return jsonify(result)
+            else:
+                return jsonify({'error': 'City not found'}), 404
+        except Exception as e:
+            print(f"Error processing request: {e}")  # Debug print
+            return jsonify({'error': 'Server error'}), 500
 
-    return country
-
-
-    
+    return jsonify({'error': 'Invalid request'}), 400

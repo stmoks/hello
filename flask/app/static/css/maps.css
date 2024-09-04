@@ -1,0 +1,42 @@
+    #search-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    #capital-search {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    #capital-suggestions {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #ddd;
+        border-top: none;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    #capital-suggestions li {
+        padding: 10px;
+        cursor: pointer;
+    }
+    #capital-suggestions li:hover, #capital-suggestions li.selected {
+        background-color: #f0f0f0;
+    }
+    #country_table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    #country_table td, #country_table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #country_table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    #map {
+        margin-top: 20px;
+    }

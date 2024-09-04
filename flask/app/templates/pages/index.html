@@ -4,6 +4,10 @@
 <h1>{% block title %}Home{% endblock title %}</h1>
 {% endblock header %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/maps.css') }}">
+{% endblock styles %}
+
 {% block content %}
 <div id="search-container">
     <form action='/submit-capital' method='POST' id='capitalForm'>
@@ -25,53 +29,11 @@
     </div>
 </div>
 
-<style>
-    #search-container {
-        max-width: 400px;
-        margin: 0 auto;
-    }
-    #capital-search {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-    #capital-suggestions {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        border: 1px solid #ddd;
-        border-top: none;
-        max-height: 200px;
-        overflow-y: auto;
-    }
-    #capital-suggestions li {
-        padding: 10px;
-        cursor: pointer;
-    }
-    #capital-suggestions li:hover, #capital-suggestions li.selected {
-        background-color: #f0f0f0;
-    }
-    #country_table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    #country_table td, #country_table th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-    #country_table tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-    #map {
-        margin-top: 20px;
-    }
-</style>
 
+{% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+{% endblock scripts %}
 
 <script>
     const capitalSearch = document.getElementById('capital-search');
@@ -167,12 +129,12 @@
     function updateMap(lat, lon) {
         mapDiv.style.display = 'block';
         if (!map) {
-            map = L.map('map').setView([lat, lon], 13);
+            map = L.map('map').setView([lat, lon], 5);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
         } else {
-            map.setView([lat, lon], 13);
+            map.setView([lat, lon], 5);
         }
         L.marker([lat, lon]).addTo(map);
     }

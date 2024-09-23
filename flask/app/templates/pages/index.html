@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
 
-{% block header %}
-<h1>{% block title %}Home{% endblock title %}</h1>
-{% endblock header %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -11,21 +8,21 @@
 
 {% block content %}
 <div id="search-container">
-    <form action='/submit-capital' method='POST' id='capitalForm'>
-        <input type="text" id="capital-search" name="capital" placeholder="Search for a capital...">
+    <form action='/submit-capital' method='POST' id='capital-form'>
+        <input type="text" autofocus id ='main-search-bar' class="search-bar" name="capital" placeholder="Search for a capital...">
         <ul id="capital-suggestions"></ul>
     </form>
 
-    <div id='country_info' style="display: none;">
+    <div id="map" style="display: none;"></div>
+    
+    <div id='country-info' style="display: none;">
         <h2>Country Information</h2>
-        <table id='country_table'>
+        <table id='country-table'>
             <tbody></tbody>
         </table>
     </div>
 
-    <div id="map" style="display: none;"></div>
-
-    <div id='map_button'>
+    <div class='map-button'>
         <button  onclick="window.location.href='/explore_map'">Explore Full Map</button>
     </div>
 </div>
@@ -33,10 +30,10 @@
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script>
-    const capitalSearch = document.getElementById('capital-search');
+    const capitalSearch = document.getElementById('main-search-bar');
     const capitalSuggestions = document.getElementById('capital-suggestions');
-    const countryInfo = document.getElementById('country_info');
-    const countryTable = document.getElementById('country_table').getElementsByTagName('tbody')[0];
+    const countryInfo = document.getElementById('country-info');
+    const countryTable = document.getElementById('country-table').getElementsByTagName('tbody')[0];
     const mapDiv = document.getElementById('map');
     let map;
     let selectedIndex = -1;
@@ -127,8 +124,8 @@
         mapDiv.style.display = 'block';
         if (!map) {
             map = L.map('map').setView([lat, lon], 5);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+                attribution: '© Basemaps contributors'
             }).addTo(map);
         } else {
             map.setView([lat, lon], 5);

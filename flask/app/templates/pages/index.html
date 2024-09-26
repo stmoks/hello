@@ -24,10 +24,8 @@
         </table>
     </div>
 
-    <div class='map-button'>
-        <button  onclick="window.location.href='/explore_map'">Explore Full Map</button>
-    </div>
 </div>
+{% endblock content %}
 
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -138,5 +136,3 @@
     const capitals = JSON.parse('{{ capitals | tojson | safe }}');
 </script>
 {% endblock scripts %}
-
-{% endblock content %}

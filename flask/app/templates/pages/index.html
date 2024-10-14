@@ -9,7 +9,7 @@
 
 {% block scripts %}
 
-<script >window.capitalsData = JSON.parse('{{ capitals | tojson | safe }}');
+<script defer>window.capitalsData = JSON.parse('{{ capitals | tojson | safe }}');
 </script>
 <script defer src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script defer src="{{ url_for('static', filename='js/index.js') }}"></script>
@@ -17,11 +17,12 @@
 
 {% block content %}
 <h1 class='main-header'>Welcome to the future of travel</h1>
-<p class='first-paragraph'>In a few clicks, you can be on your way around the world exploring all the things you've wanted to all your life</p>
+<h3 class='first-paragraph'>You are unique and how you travel should be too</h3>
 
 <div id="search-container">
-    <form action='/submit-capital' method='POST' id='capital-form'>
-        <input type="text" autofocus id ='main-search-bar' class="search-bar" name="capital" placeholder="Search for a capital...">
+    
+    <form action='/submit-capital' method='POST' id='user-chat-form'>
+        <input type="text" autofocus id='main-chat-bar' class="search-bar" name="user-chat" placeholder="Tell us about yourself...">
         <ul id="capital-suggestions"></ul>
     </form>
 
@@ -42,5 +43,7 @@
         <span class="layer-switch-switch"></span>
     </label>
 </div>
+
+<button id="mute-button">Unmute</button>
 
 {% endblock content %}

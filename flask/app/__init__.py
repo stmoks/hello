@@ -20,12 +20,8 @@ def create_app(test_config=None):
     application.register_blueprint(pages.bp)
 
     # register posts blueprint
-    from app.views import posts
-    application.register_blueprint(posts.bp)
-
-    # register maps blueprint
-    from app.views import maps
-    application.register_blueprint(maps.bp)
+    from app.views import travel
+    application.register_blueprint(travel.bp)
 
 
     return application

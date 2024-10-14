@@ -1,15 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-const capitalSearch = document.getElementById('main-search-bar');
+const capitalSearch = document.getElementById('main-chat-bar');
 const capitalSuggestions = document.getElementById('capital-suggestions');
 const countryInfo = document.getElementById('country-info');
 const countryTable = document.getElementById('country-table').getElementsByTagName('tbody')[0];
 const mapDiv = document.getElementById('map');
 const capitals = window.capitalsData;
 let map;
-let selectedIndex = -1;
 let marker;
 let countryLayer;
 let detailedLayer, defaultLayer;
+let currentLayer;
+let selectedIndex = -1;
+let isMuted = true;
 
 capitalSearch.addEventListener('input', function() {
     const searchValue = this.value.toLowerCase();
@@ -63,39 +65,54 @@ function updateSelectedSuggestion() {
     }
 }
 
+function initMap() {
+    map = L.map('map').setView([0, 0], 3);
+    
+    // Detailed layer group
+    detailedLayer = L.layerGroup([
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }),
+        L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}{r}.png', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            opacity: 0.5
+        }),
+        L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lines/{z}/{x}/{y}{r}.png', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            opacity: 0.3
+        })
+    ]);
+
+    // Default layer (OpenStreetMap with amenities)
+    defaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    });
+
+    currentLayer = defaultLayer;
+    currentLayer.addTo(map);
+
+    map.on('click', onMapClick);
+}
+
+function switchLayer() {
+    map.removeLayer(currentLayer);
+    if (currentLayer === defaultLayer) {
+        currentLayer = detailedLayer;
+    } else {
+        currentLayer = defaultLayer;
+    }
+    currentLayer.addTo(map);
+}
+
 function updateMap(lat, lon, cityName, countryCode, flagColors) {
     mapDiv.style.display = 'block';
     mapDiv.style.width = '100%';
     mapDiv.style.height = '400px';
 
     if (!map) {
-        map = L.map('map').setView([0, 0], 3);
-        
-        // Detailed layer group
-        detailedLayer = L.layerGroup([
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-            }),
-            L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}{r}.png', {
-                attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                subdomains: 'abcd',
-                opacity: 0.5
-            }),
-            L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lines/{z}/{x}/{y}{r}.png', {
-                attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                subdomains: 'abcd',
-                opacity: 0.3
-            })
-        ]);
-
-        // Default layer (OpenStreetMap with amenities)
-        defaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        });
-
-        defaultLayer.addTo(map);
-
-        map.on('click', onMapClick);
+        initMap();
     }
 
     map.flyTo([lat, lon], 7, {
@@ -152,6 +169,21 @@ function updateMap(lat, lon, cityName, countryCode, flagColors) {
     setTimeout(() => {
         map.invalidateSize();
     }, 100);
+
+    // Add mouseover event to pronounce city names
+    map.on('mousemove', function(e) {
+        if (!isMuted) {
+            let latlng = e.latlng;
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    let placeName = data.name || data.address.city || data.address.town || data.address.village;
+                    if (placeName) {
+                        pronounceCity(placeName);
+                    }
+                });
+        }
+    });
 }
 
 function onMapClick(e) {
@@ -165,7 +197,7 @@ function reverseGeocode(lat, lng) {
         .then(response => response.json())
         .then(data => {
             let placeName = data.name || data.address.city || data.address.town || data.address.village || 'Unknown location';
-            let searchBar = document.getElementById('main-search-bar');
+            let searchBar = document.getElementById('main-chat-bar');
             
             if (placeName === 'Unknown location') {
                 searchBar.style.backgroundColor = '#FFBF00'; // Amber shade
@@ -231,18 +263,26 @@ function submitCapital(capital) {
     });
 }
 
+function pronounceCity(cityName) {
+    let utterance = new SpeechSynthesisUtterance(cityName);
+    speechSynthesis.speak(utterance);
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    let muteButton = document.getElementById('mute-button');
+    muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
+}
+
 // Add this to your DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', function() {
+    initMap();
+    
     const layerSwitch = document.getElementById('layer-switch');
-    layerSwitch.addEventListener('change', function() {
-        if (this.checked) {
-            map.removeLayer(defaultLayer);
-            detailedLayer.addTo(map);
-        } else {
-            map.removeLayer(detailedLayer);
-            defaultLayer.addTo(map);
-        }
-    });
+    layerSwitch.addEventListener('change', switchLayer);
+
+    const muteButton = document.getElementById('mute-button');
+    muteButton.addEventListener('click', toggleMute);
 });
 
 document.head.insertAdjacentHTML('beforeend', `

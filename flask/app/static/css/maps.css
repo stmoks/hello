@@ -1,134 +1,158 @@
     /* #search-container {
         max-width: 400px;
         margin: 0 auto;
-    } */
-    .search-bar {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px  #4ba2c1;
-        border-radius: 4px;
-        
-    }
-    #capital-suggestions {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        border-top: none;
-        max-height: 200px;
-        overflow-y: auto;
-        width: 100%;
-        max-height: 200px;
-        background-color: #2d3436;
-    }
-    #capital-suggestions li {
-        padding: 10px;
-        cursor: pointer;
-    }
-    #capital-suggestions li:hover, #capital-suggestions li.selected {
-        background-color: #34495e;;
-    }
-
-  
-
-    #search-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    #capital-form {
-        width: 100%;
-        max-width: 600px;
-        margin-bottom: 20px;
-    }
-
-
-    #country-info {
-        width: 100%; /* Width of the div */
-        height: 100%; /* Height of the div */
-        overflow: auto; 
-        margin-bottom: 20px;
-    }
+} */
+.search-bar {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px  #4ba2c1;
+    border-radius: 4px;
     
+}
+#capital-suggestions {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    max-height: 200px;
+    background-color: #2d3436;
+}
+#capital-suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#capital-suggestions li:hover, #capital-suggestions li.selected {
+    background-color: #34495e;;
+}
 
 
-    #country-table td {
-        padding: 10px;
-        border: 1px solid #4ecdc4;
-    }
 
-  
-    #map {
-        width: 100%;
-        height: 500px;
-        margin-bottom: 20px;
-        margin-top: 20px;
-        border-radius: 5px;
-    }
+#search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-    .map-button {
-        width: 100%;
-        text-align: center;
-    }
 
-    #country-info table {
-        width: 100%; 
-        height: 100px; 
-        table-layout: fixed; 
-    }
 
-    .layer-switch-container {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-        z-index: 1000;
-    }
-    
-    .layer-switch-checkbox {
-        display: none;
-    }
-    
-    .layer-switch-label {
-        display: block;
-        overflow: hidden;
-        cursor: pointer;
-        width: 60px;
-        height: 34px;
-        background-color: #ccc;
-        border-radius: 34px;
-        position: relative;
-    }
-    
-    .layer-switch-inner {
-        display: block;
-        width: 200%;
-        margin-left: -100%;
-        transition: margin 0.3s ease-in 0s;
-    }
-    
-    .layer-switch-switch {
-        display: block;
-        width: 26px;
-        height: 26px;
-        background: #fff;
-        position: absolute;
-        top: 4px;
-        bottom: 4px;
-        right: 26px;
-        border-radius: 50%;
-        transition: all 0.3s ease-in 0s;
-    }
-    
-    .layer-switch-checkbox:checked + .layer-switch-label {
-        background-color: #2196F3;
-    }
-    
-    .layer-switch-checkbox:checked + .layer-switch-label .layer-switch-switch {
-        right: 4px;
-    }
+#user-chat-form {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+
+}
+
+#main-chat-bar {
+    border-radius: 22px;
+    height: 65px;
+    border: 2px solid;
+    animation: rainbow-border 5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes rainbow-border {
+    0% { border-color: red; }
+    14% { border-color: orange; }
+    28% { border-color: yellow; }
+    42% { border-color: green; }
+    57% { border-color: blue; }
+    71% { border-color: indigo; }
+    85% { border-color: violet; }
+    100% { border-color: hsl(calc(360 * random()), 100%, 50%); }
+}
+
+#country-info {
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    margin-bottom: 20px;
+}
+
+
+
+#country-table td {
+    padding: 10px;
+    border: 1px solid #4ecdc4;
+}
+
+
+#map {
+    width: 100%;
+    height: 500px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.map-button {
+    width: 100%;
+    text-align: center;
+}
+
+#country-info table {
+    width: 100%; 
+    height: 100px; 
+    table-layout: fixed; 
+}
+
+.layer-switch-container {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    z-index: 1000;
+}
+
+.layer-switch-checkbox {
+    display: none;
+}
+
+.layer-switch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc;
+    border-radius: 34px;
+    position: relative;
+}
+
+.layer-switch-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.layer-switch-switch {
+    display: block;
+    width: 26px;
+    height: 26px;
+    background: #fff;
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    right: 26px;
+    border-radius: 50%;
+    transition: all 0.3s ease-in 0s;
+}
+
+.layer-switch-checkbox:checked + .layer-switch-label {
+    background-color: #2196F3;
+}
+
+.layer-switch-checkbox:checked + .layer-switch-label .layer-switch-switch {
+    right: 4px;
+}
+
+

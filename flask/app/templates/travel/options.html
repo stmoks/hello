@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+{% endblock styles %}
+
+
+{% block content %}
+  <div id="posts-container">
+    {% for post in posts %}
+      <article class="draggable" draggable="true">
+        <p class="message">{{ post["message"] }}</p>
+        <aside>Travel Option {{ post["author"] }} on {{ post["created"].strftime("%b %d, %Y at %I:%M%p") }}</aside>
+      </article>
+    {% endfor %}
+  </div>
+{% endblock content %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/posts.js') }}"></script>
+{% endblock scripts%}
+
+ 

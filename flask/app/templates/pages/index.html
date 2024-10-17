@@ -8,9 +8,8 @@
 {% endblock styles %}
 
 {% block scripts %}
-
-<script defer>window.capitalsData = JSON.parse('{{ capitals | tojson | safe }}');
-</script>
+<script defer>window.citiesData = JSON.parse('{{ cities | tojson | safe }}')
+ </script> 
 <script defer src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script defer src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock scripts %}
@@ -20,12 +19,11 @@
 <h3 class='first-paragraph'>You are unique and how you travel should be too</h3>
 
 <div id="search-container">
-    
     <form action='/submit-capital' method='POST' id='user-chat-form'>
         <input type="text" autofocus id='main-chat-bar' class="search-bar" name="user-chat" placeholder="Tell us about yourself...">
-        <ul id="capital-suggestions"></ul>
-    </form>
-
+    </form>        
+ 
+   
     <div id="map"></div>
     
     <div id='country-info' style="display: none;">
@@ -35,15 +33,5 @@
         </table>
     </div>
 </div>
-
-<div class="layer-switch-container">
-    <input type="checkbox" id="layer-switch" class="layer-switch-checkbox">
-    <label for="layer-switch" class="layer-switch-label">
-        <span class="layer-switch-inner"></span>
-        <span class="layer-switch-switch"></span>
-    </label>
-</div>
-
-<button id="mute-button">Unmute</button>
 
 {% endblock content %}

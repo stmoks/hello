@@ -8,8 +8,8 @@ bp = Blueprint('pages', __name__)
 def home():
     db_uri = get_db_uri()
     country_info = pl.read_database_uri('SELECT city FROM reference.country_info', db_uri)
-    capitals = country_info.select(pl.col('city').sort()).to_series().to_list()
-    return render_template('pages/index.html', capitals=capitals)
+    cities = country_info.select(pl.col('city').sort()).to_series().to_list()
+    return render_template('pages/index.html', cities=cities)
 
 @bp.route('/submit-capital', methods=['POST'])
 def submit_capital():
@@ -19,6 +19,7 @@ def submit_capital():
     if request.method == 'POST':
         city = request.form.get('capital')
         try:
+            
             country_data = country_info.filter(pl.col('city') == city).select(pl.all().exclude(['coords_city_sdc','flag'])).to_dict(as_series=False)
             if country_data:
                 # Convert to regular Python types for JSON serialization

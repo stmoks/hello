@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
 const capitalSearch = document.getElementById('main-chat-bar');
-const capitalSuggestions = document.getElementById('capital-suggestions');
 const countryInfo = document.getElementById('country-info');
 const countryTable = document.getElementById('country-table').getElementsByTagName('tbody')[0];
 const mapDiv = document.getElementById('map');
-const capitals = window.capitalsData;
+const capitals = window.citiesData;
 let map;
 let marker;
 let countryLayer;
@@ -14,56 +13,10 @@ let selectedIndex = -1;
 let isMuted = true;
 
 capitalSearch.addEventListener('input', function() {
-    const searchValue = this.value.toLowerCase();
-    const filteredCapitals = capitals.filter(capital => 
-        capital.toLowerCase().startsWith(searchValue)
-    );
-
-    capitalSuggestions.innerHTML = '';
-    filteredCapitals.forEach((capital, index) => {
-        const li = document.createElement('li');
-        li.textContent = capital;
-        li.addEventListener('click', function() {
-            capitalSearch.value = capital;
-            capitalSuggestions.innerHTML = '';
-            submitCapital(capital);
-        });
-        capitalSuggestions.appendChild(li);
-    });
-    selectedIndex = -1;
+    const searchValue = this.value.toLowerCase();  
 });
 
-capitalSearch.addEventListener('keydown', function(e) {
-    const suggestions = capitalSuggestions.getElementsByTagName('li');
-    if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
-        updateSelectedSuggestion();
-    } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        selectedIndex = Math.max(selectedIndex - 1, -1);
-        updateSelectedSuggestion();
-    } else if (e.key === 'Enter') {
-        e.preventDefault();
-        if (selectedIndex >= 0) {
-            capitalSearch.value = suggestions[selectedIndex].textContent;
-            capitalSuggestions.innerHTML = '';
-            submitCapital(capitalSearch.value);
-        } else {
-            submitCapital(this.value);
-        }
-    }
-});
 
-function updateSelectedSuggestion() {
-    const suggestions = capitalSuggestions.getElementsByTagName('li');
-    for (let i = 0; i < suggestions.length; i++) {
-        suggestions[i].classList.toggle('selected', i === selectedIndex);
-    }
-    if (selectedIndex >= 0) {
-        suggestions[selectedIndex].scrollIntoView({ block: 'nearest' });
-    }
-}
 
 function initMap() {
     map = L.map('map').setView([0, 0], 3);
